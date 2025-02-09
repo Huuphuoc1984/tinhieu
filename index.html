@@ -1,151 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biểu Đồ Tín Hiệu</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-        }
-
-        .chart {
-            display: flex;
-            gap: 50px;
-        }
-
-        .button {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            text-align: center;
-        }
-
-        .button:hover {
-            transform: scale(1.1);
-        }
-
-        .diemmua { background-color: purple; }
-        .dangtang { background-color: orange; }
-        .danggiam { background-color: green; }
-        .diemban { background-color: black; }
-
-        .icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        .label {
-            font-size: 14px;
-            line-height: 1.5;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="chart">
-        <div class="button" id="button1">
-            <div class="icon">?</div>
-            <div class="label">Đang tải...</div>
-        </div>
-        <div class="button" id="button2">
-            <div class="icon">?</div>
-            <div class="label">Đang tải...</div>
-        </div>
-    </div>
-
-    <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyvhLdsO3ibssBiykpnw9G3HfqwunYEZ-Wf9qYsW4iWDOaADK2UsscThVsBAa3uTVjrAQ/exec";
-
-    async function fetchAndRenderButtons() {
-        try {
-            const response = await fetch(scriptURL);
-            console.log("Phản hồi từ API:", response); // Log phản hồi HTTP từ API
-
-            if (!response.ok) throw new Error("Không thể lấy dữ liệu từ Apps Script.");
-
-            const data = await response.json();
-            console.log("Dữ liệu JSON từ Apps Script:", data); // Log dữ liệu JSON nhận được
-
-            if (!data || !Array.isArray(data) || data.length < 2) {
-                throw new Error("Dữ liệu không hợp lệ hoặc thiếu thông tin.");
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hình ảnh Phoenix và Aegis</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f4f4f4;
+                flex-direction: column;
             }
 
-            const button1 = document.getElementById("button1");
-            const button2 = document.getElementById("button2");
+            h1 {
+                text-align: center;
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
 
-            console.log("Cập nhật button1 với dữ liệu:", data[0]); // Log dữ liệu cho nút 1
-            console.log("Cập nhật button2 với dữ liệu:", data[1]); // Log dữ liệu cho nút 2
+            .image-container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                overflow: hidden;
+            }
 
-            if (button1) updateButton(button1, data[0]);
-            if (button2) updateButton(button2, data[1]);
+            img {
+                max-width: 100%;
+                max-height: 100%;
+                display: block;
+                transition: transform 0.3s ease;
+            }
 
-        } catch (error) {
-            console.error("Lỗi khi lấy dữ liệu:", error); // Log lỗi khi có vấn đề với API
-        }
-    }
+            .controls {
+                margin-top: 20px;
+                text-align: center;
+            }
 
-    function updateButton(button, item) {
-        if (!button) {
-            console.error("Phần tử nút không hợp lệ.");
-            return;
-        }
+            button {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                margin: 5px;
+            }
 
-        console.log("Dữ liệu cập nhật nút:", item); // Log dữ liệu đầu vào cho nút
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Chọn Hình Ảnh Phoenix hoặc Aegis</h1>
+        <div class="controls">
+            <button onclick="showImage('Phoenix')">Phoenix</button>
+            <button onclick="showImage('Aegis')">Aegis</button>
+        </div>
+        <div class="image-container">
+            <img id="image" src="Phoenix.png" alt="Phoenix" />
+        </div>
+        <div class="controls">
+            <button onclick="zoomIn()">Phóng to</button>
+            <button onclick="zoomOut()">Thu nhỏ</button>
+        </div>
 
-        button.className = "button"; // Reset lớp nút
+        <script>
+            var image = document.getElementById("image");
+            var currentScale = 1; // Tỉ lệ ban đầu của ảnh
 
-        let icon = "?";
+            function showImage(imageName) {
+                if (imageName === 'Phoenix') {
+                    image.src = 'Phoenix.png';
+                } else if (imageName === 'Aegis') {
+                    image.src = 'Aegis.png';
+                }
+            }
 
-        // Kiểm tra trạng thái và cập nhật biểu tượng
-        const trangThai = item.TrangThai ? item.TrangThai.trim().toLowerCase() : "";
-        console.log("Trạng thái của nút:", trangThai); // Log trạng thái hiện tại
+            function zoomIn() {
+                currentScale += 0.1; // Tăng tỉ lệ ảnh
+                image.style.transform = "scale(" + currentScale + ")";
+            }
 
-        if (trangThai === "diemmua") {
-            button.classList.add("diemmua");
-            icon = "♥"; // Cơ
-        } else if (trangThai === "dangtang") {
-            button.classList.add("dangtang");
-            icon = "♦"; // Rô
-        } else if (trangThai === "danggiam") {
-            button.classList.add("danggiam");
-            icon = "♣"; // Chuồn
-        } else if (trangThai === "diemban") {
-            button.classList.add("diemban");
-            icon = "♠"; // Bích
-        } else {
-            console.error("Trạng thái không hợp lệ:", trangThai); // Log nếu trạng thái không hợp lệ
-        }
-
-        console.log("Biểu tượng cập nhật:", icon); // Log biểu tượng cập nhật
-
-        // Cập nhật biểu tượng và nhãn của nút
-        button.querySelector(".icon").textContent = icon;
-        button.querySelector(".label").innerHTML = `
-            ${item.TinHieu} <br>
-            ${item.TrangThai} <br>
-            ${item.SoPhien} phiên
-        `;
-    }
-
-    fetchAndRenderButtons(); // Gọi hàm lần đầu
-    setInterval(fetchAndRenderButtons, 10000); // Lặp lại sau mỗi 10 giây
-</script>
-</body>
+            function zoomOut() {
+                if (currentScale > 0.2) { // Đảm bảo không thu nhỏ quá nhỏ
+                    currentScale -= 0.1; // Giảm tỉ lệ ảnh
+                    image.style.transform = "scale(" + currentScale + ")";
+                }
+            }
+        </script>
+    </body>
 </html>
